@@ -27,7 +27,6 @@ export class CityExplorer extends Component {
       showLonLat:true,
       showMap:true
     });
-    console.log("data:::", cityData);
 
   };
 
