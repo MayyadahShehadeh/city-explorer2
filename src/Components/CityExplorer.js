@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { Component } from "react";
 import Weather from "./Weather";
+import Movies from "./Movies";
+import { Row, Form, Button } from "react-bootstrap";
 
 let Token = process.env.REACT_APP_LOCATIONIQ_KEY;
 
@@ -12,7 +14,8 @@ export class CityExplorer extends Component {
       searchCity: "",
       showAll: false,
       errorMsg: false,
-      weatherObj: {},
+      weatherObj: [],
+      moviesArray: []
     };
   }
 
@@ -23,20 +26,32 @@ export class CityExplorer extends Component {
     await this.setState({
       searchCity: e.target.city.value,
     });
+
+    // ---------------- get locationIQ api -------------
     let locaUrl = `https://eu1.locationiq.com/v1/search?key=${Token}&q=${this.state.searchCity}&format=json`;
     try {
       let locData = await axios.get(locaUrl);
 
+      // ------------- get weather api from local server -----------
       let weatherData = await axios.get(
         `http://localhost:3001/weather?searchQuery=${this.state.searchCity}`
       );
       console.log("weather dattaaaa", weatherData.data);
+
+      // ----------- get movies api from local server ---------
+      let moviesData = await axios.get(
+        `http://localhost:3001/movies?searchQuery=${this.state.searchCity}`
+      )
+      console.log('axios moviesss', moviesData);
       this.setState({
         cityData: locData.data[0],
         showAll: true,
-        weatherObj: weatherData.data,
+        moviesArray: moviesData.data
+        // weatherObj: weatherData.data,
       });
+      console.log('moviess', this.state.moviesArray);
     } catch (error) {
+      console.log("error:", error);
       this.setState({
         showAll: false,
         errorMsg: true,
@@ -48,10 +63,12 @@ export class CityExplorer extends Component {
     return (
       <>
         <h1>city explorer</h1>
-        <form onSubmit={this.getCityLocation}>
-          <input type="text" placeholder="Enter a City" name="city" />
-          <button>Explore!</button>
-        </form>
+        <Form onSubmit={this.getCityLocation}>
+          <Form.Control type="text" placeholder="Enter a City" name="city" style={{ width: "300px" }} />
+          <Button variant="primary" type="submit">
+            Explore!
+          </Button>
+        </Form>
 
         {this.state.showAll && (
           <>
@@ -67,6 +84,18 @@ export class CityExplorer extends Component {
             <img
               src={`https://maps.locationiq.com/v3/staticmap?key=${Token}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=18&size=<width>x<height>&format=<format>&maptype=<MapType>&markers=icon:<icon>|<latitude>,<longitude>&markers=icon:<icon>|<latitude>,<longitude>`}
             />
+            <Row xs={1} md={5} className="g-4">
+              {this.state.moviesArray.map((item, idx) => {
+                return (
+                  <Movies
+                    key={idx}
+                    movieTitle={item.title}
+                    movieImg={item.imageUrl}
+                    movieOverview={item.overview}
+                  />
+                )
+              })}
+            </Row>
           </>
         )}
 
