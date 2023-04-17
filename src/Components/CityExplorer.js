@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import Weather from "./Weather";
 import Movies from "./Movies";
-import { Row, Form, Button } from "react-bootstrap";
+import { Row, Form, Button, Card, ListGroup, Col } from "react-bootstrap";
 
 let Token = process.env.REACT_APP_LOCATIONIQ_KEY;
 
@@ -46,8 +46,8 @@ export class CityExplorer extends Component {
       this.setState({
         cityData: locData.data[0],
         showAll: true,
-        moviesArray: moviesData.data
-        // weatherObj: weatherData.data,
+        moviesArray: moviesData.data,
+        weatherObj: weatherData.data,
       });
       console.log('moviess', this.state.moviesArray);
     } catch (error) {
@@ -62,28 +62,37 @@ export class CityExplorer extends Component {
   render() {
     return (
       <>
-        <h1>city explorer</h1>
-        <Form onSubmit={this.getCityLocation}>
-          <Form.Control type="text" placeholder="Enter a City" name="city" style={{ width: "300px" }} />
+        <h1 style={{ textAlign: 'center', padding: '40px' }}>city explorer</h1>
+        <Form onSubmit={this.getCityLocation} className="text-center">
+          <Form.Control type="text" placeholder="Enter a City" name="city" style={{ width: "300px", marginLeft: '590px' }} className="text-center" />
+          <br />
           <Button variant="primary" type="submit">
-            Explore!
-          </Button>
+            Explore!</Button>
         </Form>
-
+        <br />
         {this.state.showAll && (
           <>
-            <p>
-              {this.state.cityData.display_name}
-              <br />
-              lat: {this.state.cityData.lat}
-              <br />
-              lon: {this.state.cityData.lon}
-              <br />
-            </p>
-            <Weather weatherInfo={this.state.weatherObj} />
-            <img
-              src={`https://maps.locationiq.com/v3/staticmap?key=${Token}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=18&size=<width>x<height>&format=<format>&maptype=<MapType>&markers=icon:<icon>|<latitude>,<longitude>&markers=icon:<icon>|<latitude>,<longitude>`}
-            />
+            <Row>
+
+              <Col>
+                <Card style={{ width: '18rem' , marginLeft:'110px'}}>
+                  <ListGroup variant="flush" >
+                    <ListGroup.Item>city name: {this.state.cityData.display_name}</ListGroup.Item>
+                    <ListGroup.Item>lat: {this.state.cityData.lat}</ListGroup.Item>
+                    <ListGroup.Item>lon: {this.state.cityData.lon}</ListGroup.Item>
+                  </ListGroup>
+                </Card>
+                <br />
+                <Weather weatherInfo={this.state.weatherObj} />
+              </Col>
+              <Col>
+                <img
+                  src={`https://maps.locationiq.com/v3/staticmap?key=${Token}&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=18&size=<width>x<height>&format=<format>&maptype=<MapType>&markers=icon:<icon>|<latitude>,<longitude>&markers=icon:<icon>|<latitude>,<longitude>`}
+                  style={{ width: '360pxpx', height: '450px' }} className="text-center" />
+              </Col>
+            </Row>
+            <br />
+            <br />
             <Row xs={1} md={5} className="g-4">
               {this.state.moviesArray.map((item, idx) => {
                 return (
