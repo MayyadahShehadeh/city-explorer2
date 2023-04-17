@@ -5,7 +5,7 @@ export class Weather extends Component {
   render() {
     return (
       <>
-        <Table striped bordered hover tyle={{ width: "14rem" }} className="text-center">
+        <Table striped bordered hover style={{ width: "14rem" }} className="text-center">
           <thead>
             <tr>
               <th > date:</th>
